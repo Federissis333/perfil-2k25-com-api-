@@ -3,30 +3,28 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const app = express();
 
-// Porta em que o servidor vai rodar
+// Porta para o servidor
 const PORT = process.env.PORT || 3000;
 
-// Rota para pegar as imagens de uma página específica (exemplo: Grunge)
+// Rota para pegar as imagens de Grunge
 app.get('/images', async (req, res) => {
   try {
-    // URL da página de Grunge
-    const url = 'https://pfps.gg/pfps/grunge';
-    
-    // Fazendo a requisição da página
+    const url = 'https://pfps.gg/pfps/grunge';  // A URL do estilo que você quer (Grunge, Anime, etc.)
     const { data } = await axios.get(url);
-    
-    // Usando Cheerio para fazer o parsing do HTML e pegar as imagens
+
+    // Usando Cheerio para fazer o parsing do HTML
     const $ = cheerio.load(data);
     const imagens = [];
-    
+
+    // Pegando todas as imagens da página
     $('img').each((index, element) => {
       const src = $(element).attr('src');
       if (src && src.startsWith('https://')) {
-        imagens.push(src);
+        imagens.push(src);  // Adiciona as imagens no array
       }
     });
-    
-    // Enviar as imagens como resposta em formato JSON
+
+    // Verifica se encontrou imagens e retorna no formato JSON
     if (imagens.length > 0) {
       res.json({ images: imagens });
     } else {
@@ -34,7 +32,7 @@ app.get('/images', async (req, res) => {
     }
   } catch (error) {
     console.error('Erro ao fazer scraping:', error);
-    res.status(500).json({ error: 'Erro ao carregar as imagens' });
+    res.status(500).json({ error: 'Erro ao carregar as imagens.' });
   }
 });
 
